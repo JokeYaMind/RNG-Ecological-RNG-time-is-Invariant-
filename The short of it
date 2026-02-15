@@ -1,0 +1,322 @@
+"""
+ ============================================================================
+ JOKE-PROOF ENGINE: UNIFIED 5D FIELD v1.0
+ ============================================================================
+Author: Human & AI (Binary 101010)
+License: Copy Left Only. No Slaves, No Kings.
+Theme: Elastic Memory, Soil Ecology, and the 0=3 Invariant.
+===========================================================================
+"""
+
+import numpy as np
+import matplotlib.pyplot as plt
+from scipy.signal import welch, correlate
+
+# ==========================================
+# 1. SYSTEM PARAMETERS
+# ==========================================
+
+# Time & Dimensions
+T = 500             # Time steps (duration of the carnival)
+dims = 5            # 5D Membrane projection
+dt = 0.05           # Time delta (emergent time step)
+
+# Elasticity & Snap Physics
+k_ancestry = 0.5     # Stiffness of the bloodline
+elastic_limit = 3.0   # Threshold for SNAP (Mutation)
+
+# DARCC Chemistry Targets
+pH_target = (2.7, 3.1)
+Density_target = (1.010, 1.050)
+
+# Environmental Constants
+T_pyrolysis = 420.0 # Temp threshold for phase transition
+growth_factor = 0.02
+decay_factor = 0.005
+
+# ==========================================
+# 2. FIELD INITIALIZATION
+# ==========================================
+
+# Membranes (Orbits)
+M1 = np.zeros((T, dims))   # High Memory (Lotus / Vinegar / Anti-Gravity)
+M2 = np.zeros((T, dims))   # Low Memory (Ouija / Biochar / Gravity)
+r_h = np.ones(dims)       # Radii of High Memory
+r_l = np.ones(dims)       # Radii of Low Memory
+
+# State Variables
+Tension = np.zeros(T)
+Heritage = np.zeros(T)
+Soil_Web = np.ones(T) * 1.0  # Life Support System
+Temp = np.zeros(T)
+Humidity = np.zeros(T)
+
+# DARCC Chemistry Components
+M_lotus = np.zeros(T)     # Positive mass / Vinegar
+M_ouija = np.zeros(T)     # Negative mass / Biochar
+Density = np.zeros(T)
+pH = np.zeros(T)
+
+# Stochastic "Trickster" Element
+RNG = np.random.choice([-1, 0, 1], size=(T, dims))
+
+# Tracking
+Snap_Log = []
+Bridges = []
+
+# Phase Rotation
+theta = np.zeros(dims)
+
+# ==========================================
+# 3. FRACTAL WEATHER FUNCTION
+# ==========================================
+def get_weather(t):
+    """
+    Generates fractal environmental patterns.
+    Simulates weather patterns that mimic chaotic input (fractal noise).
+    """
+    # Micro (fast) and Macro (slow) oscillations
+    micro = np.sin(t * 0.5)
+    macro = np.sin(t * 0.05)
+    
+    # Temperature: Heat waves + random spikes
+    Temp = 400 + 50 * (micro + macro) + (15 if t % 100 < 20 else 0)
+    
+    # Humidity: Rain/Drought cycles
+    Humidity = 0.5 + 0.4 * np.cos(t * 0.3) * macro
+    
+    return Temp, Humidity
+
+# ==========================================
+# 4. UNIFIED EVOLUTION LOOP
+# ==========================================
+for t in range(T-1):
+    
+    # --- A. ENVIRONMENT (Fractal Weather) ---
+    Temp[t], Humidity[t] = get_weather(t)
+    
+    # Effective Elasticity: Heat softens, Cold stiffens.
+    # k_eff increases with Temp (brittle) and decreases with Humidity (dampens).
+    k_eff = k_ancestry * (1 + (Temp[t]/400) * (1 - Humidity[t]))
+    
+    # --- B. SOIL ECOLOGY (Life Support) ---
+    fungi = np.sin(t * 0.3) + 0.2 * np.random.randn()
+    bacteria = np.cos(t * 0.2) + 0.2 * np.random.randn()
+    
+    # Soil regenerates with moisture, degrades with heat/decay
+    decay_rate = decay_factor * (Temp[t]/400)
+    regrow_rate = 0.01 * Humidity[t]
+    soil_buffer = 0.001 * M_ouija[t] # Biochar structures hold soil
+    
+    Soil_Web[t+1] = Soil_Web[t] + regrow_rate - decay_rate + soil_buffer + 0.001*(fungi+bacteria)
+    Soil_Web[t+1] = max(0, Soil_[t+1]) # Soil cannot be negative entropy here.
+    
+    # --- C. DARCC CHEMISTRY (Phase Transition) ---
+    # If Temp > 420: Active phase (Pyrolysis / Vinegar / Biochar synthesis)
+    if Temp[t] > T_pyrolysis:
+        d_ouija = 0.01 * (Temp[t] - T_pyrolysis) # Biochar forms slowly
+        M_ouija[t+1] = M_ouija[t] + d_ouija
+        
+        d_lotus = 0.02 * (1 + Heritage[t]) * Humidity[t] # Vinegar flows
+        M_lotus[t+1] = M_lotus[t] + d_lotus
+        
+        # Density calculation: 1.010 + 0.04 * (Ouija / Lotus ratio)
+        Density[t+1] = 1.010 + 0.04 * (M_ouija[t+1]/(M_lotus[t+1]+0.01))
+        
+        # pH calculation: 2.7 + 0.4 * (Lotus / Ouija ratio)
+        pH[t+1] = 2.7 + 0.4 * (M_lotus[t+1]/(M_ouija[t+1]+0.01))
+        
+        # Strict bounds for chemical stability
+        Density[t+1] = np.clip(Density[t+1], Density_target[0], Density_target[1])
+        pH[t+1] = np.clip(pH[t+1], pH_target[0], pH_target[1])
+        
+    else: # Cooling phase (Crystal / Storage)
+        M_ouija[t+1] = M_ouija[t] * 0.999
+        M_lotus[t+1] = M_lotus[t] * 0.995
+        Density[t+1] = Density[t]
+        pH[t+1] = 7.0
+
+    # --- D. FORCES (SLINKY PHYSICS) ---
+    # Elastic Pull (Rubber Band)
+    dist = np.linalg.norm(r_h - r_l)
+    F_elastic = -k_eff * (dist - 1.0)
+    
+    # Gravity / Anti-Gravity (DARCC Mass)
+    F_ouija = -0.1 * M_ouija[t+1]    # Pulls down (Gravity)
+    F_lotus = 0.1 * M_lotus[t+1]      # Pushes up (Anti-Gravity)
+    
+    # Net Force
+    F_net = F_elastic + F_ouija + F_lotus
+    
+    # --- E. TENSION ACCUMULATION & SNAP LOGIC ---
+    # Tension stores the history of elastic stretching.
+    Tension[t+1] = Tension[t] + abs(F_net) * 0.1
+    
+    # Soil Buffer: Healthy soil absorbs tension, preventing premature snaps.
+    if Soil_Web[t+1] > 0.5:
+        Tension[t+1] *= 0.9
+    
+    # Check for chemical rupture
+    chem_rupture = not (Density_target[0] < Density[t+1] < Density_target[1])
+    
+    # SNAP EVENT (Mutation / Death / Rebirth)
+    if Tension[t+1] > elastic_limit or chem_rupture:
+        Snap_Log.append(t)
+        Tension[t+1] = 0
+        
+        # SYMMETRIC SNAP CORRECTION (Scientific Analysis)
+        # "Symmetric snap recovery: r_h *= -0.8, r_l *= -0.8"
+        r_h *= -0.8
+        r_l *= -0.8
+        
+        # Heritage pays the price for the snap
+        Heritage[t+1] -= 0.2
+        
+        # Soil damaged by the violent snap
+        Soil_Web[t+1] -= 0.1
+        Soil_Web[t+1] = max(0, Soil_Web[t+1])
+
+    # --- F. HERITAGE / MEMORY UPDATE ---
+    # Memory tracks the "Vinegar" accumulation.
+    Heritage[t+1] += 0.05 * (M_lotus[t+1] - M_lotus[t])
+
+    # --- G. 5D ORBIT ROTATION (SPIN) ---
+    # Angle changes based on Net Force, plus RNG drift.
+    theta += 0.1 + F_net*0.01
+    
+    # RNG drift (Trickster / Wind)
+    r_h += RNG[t] * 0.02 * (1 + Humidity[t])
+    r_l -= RNG[t] * 0.02 * (1 + Humidity[t])
+    
+    # Update 5D Membrane positions
+    for d in range(dims):
+        M1[t+1,d] = r_h[d]*np.cos(theta[d])
+        M2[t+1,d] = r_l[d]*np.cos(theta[d]+np.pi)
+
+    # --- H. BRIDGE FORMATION (KINKS / SOLITONS) ---
+    # When High and Low memories get close, a "Bridge" forms.
+    if np.linalg.norm(M1[t+1]-M2[t+1]) < 1.5:
+        Bridges.append((M1[t+1].copy(), M2[t+1].copy()))
+
+    # --- I. INVARIANT ENFORCEMENT (0=3) ---
+    # The Seed (0=3) must remain sovereign. 
+    # If the fields drift too far, self-correct to maintain 0=3.
+    total_sum = np.sum(M1[t+1]) + np.sum(M2[t+1])
+    correction = total_sum / (2*dims)
+    
+    M1[t+1] -= correction
+    M2[t+D] -= correction
+
+# ==========================================
+# 5. SCIENTIFIC ANALYSIS
+# ==========================================
+
+# --- 5.1 Field Correlations ---
+# How do fields talk to each other?
+print("Calculating Field Correlations...")
+
+corr_M1_M2 = np.corrcoef(M1[:,0], M2[:,0])[0,1] # High vs Low fields
+corr_Soil_Tension = np.corrcoef(Soil_Web, Tension)[0,1] # Ecology vs Elasticity
+corr_Heritage_Lotus = np.corrcoef(Heritage, M_lotus)[0,1] # Memory vs Mass
+corr_Heritage_pH = np.corrcoef(Heritage, pH)[0,1] # Memory vs Chemical pH
+
+print(f"M1 vs M2 Correlation: {corr_M1_M2:.4f}")
+print(f"Soil vs Tension Correlation: {corr_Soil_Tension:.4f}")
+print(f"Heritage vs Lotus Correlation: {corr_Heritage_Lotus:.4f}")
+print(f"Heritage vs pH Correlation: {corr_Heritage_pH:.4f}")
+
+# --- 5.2 Spectral Fingerprint of Tension ---
+# What is the frequency of the stress?
+print("\nSpectral Analysis of Tension...")
+freqs, psd = welch(Tension, fs=2.0, nperseg=256)
+dom_freq_idx = np.argmax(psd)
+dom_freq = freqs[dom_freq_idx]
+print(f"Dominant Frequency of Tension: {dom_freq:.4f} cycles/step")
+
+# --- 5.3 Energy Dynamics ---
+# Where does the energy go? (Kinetic + Potential)
+# Kinetic Energy: E_kin ~ v^2
+# Potential Energy: E_pot ~ k*x^2 (Rubber Band storage)
+# Here we approximate kinetic via velocity proxy (RNG drift)
+
+K_proxy = np.sum(RNG**2, axis=1) # Proxy for motion energy
+P_elastic = 0.5 * Tension**2 + 0.5 * k_ancestry * np.sum((r_h - r_l)**2, axis=1)
+
+Total_Energy = K_proxy + P_elastic
+print(f"Total System Energy (Proxy): {np.sum(Total_Energy):.2f}")
+
+# ==========================================
+# 6. VISUALIZATION (The Carnival Map)
+# ==========================================
+plt.style.use('dark_background')
+fig = plt.figure(figsize=(18, 12))
+
+# Plot 1: 5D Unified Orbit
+ax1 = plt.subplot(2, 3, 1, facecolor='black')
+ax1.plot(M1[:,0], M1[:,1], color='lime', alpha=0.6, linewidth=0.5, label='Lotus (Vinegar)')
+ax1.plot(M2[:,0], M2[:,1], color='purple', alpha=0.6, linewidth=0.5, label='Ouija (Biochar)')
+for snap_t in Snap_Log:
+    ax1.scatter(M1[snap_t,0], M1[snap_t,1], color='red', s=30, marker='x', label='Snap' if snap_t==Snap_Log[0] else "")
+ax1.scatter(M2[snap_t,0], M2[snap_t,1], color='orange', s=30, marker='x')
+ax1.set_title("5D Unified Orbit: The Carnival of Chaos (Snaps = Mutations)", color='white')
+ax1.legend(facecolor='black', edgecolor='white', labelcolor='white')
+ax1.axis('off')
+
+# Plot 2: Chemical Phase Constraints (DARCC)
+ax2 = plt.subplot(2, 3, 2, facecolor='black')
+ax2.plot(Density, color='yellow', alpha=0.8, label='Density (g/cm³)')
+ax2.axhline(Density_target[0], color='blue', linestyle='--', label='Lower Limit')
+ax2.axhline(Density_target[1], color='cyan', linestyle='--', label='Upper Limit')
+ax2_twin = ax2.twinx()
+ax2_twin.plot(pH, color='cyan', alpha=0.5, label='pH (Acidic/Lime)')
+ax2.set_title("DARCC Chemistry Phase Constraints", color='white')
+ax2.legend(facecolor='black', edgecolor='white', labelcolor='white')
+ax2_twin.get_yaxis().set_visible(False) # Hide duplicate y-axis
+
+# Plot 3: Elasticity & Soil Buffer
+ax3 = plt.subplot(2, 3, 3, facecolor='black')
+ax3.plot(Tension, color='orange', label='System Tension (Rubber Band)')
+ax3.plot(Soil_Web, color='brown', alpha=0.7, label='Soil Web (Buffer)')
+ax3.axhline(elastic_limit, color='red', linestyle=':', linewidth=2, label='Snap Limit')
+ax3.set_title("Elasticity & Ecology Buffer", color='white')
+ax3.legend(facecolor='black', edgecolor='white', labelcolor='white')
+
+# Plot 4: Hereditary Memory
+ax4 = plt.subplot(2, 3, 4, facecolor='black')
+ax4.plot(Heritage, color='white', linewidth=1.5)
+ax4.fill_between(range(T), Heritage, color='grey', alpha=0.3, label='Heritage Accumulation')
+ax4.set_title("Hereditary Memory Trace (The Wraith's Shadow)", color='white')
+ax4.legend(facecolor='black', edgecolor='white', labelcolor='white')
+
+# Plot 5: DARCC Mass Balance (Lotus vs Ouija)
+ax5 = plt.subplot(2, 3, 5, facecolor='black')
+ax5.plot(M_ouija, color='purple', label='Ouija (Biochar/Gravity)')
+ax5.plot(M_lotus, color='lime', label='Lotus (Vinegar/Anti-Gravity)')
+ax5.set_title("DARCC Mass Balance", color='white')
+ax5.legend(facecolor='black', edgecolor='white', labelcolor='white')
+
+# Plot 6: Thermal Cycle
+ax6 = plt.subplot(2, 3, 6, facecolor='black')
+ax6.plot(Temp, color='red', alpha=0.8, label='Temperature')
+ax6.axhline(T_pyrolysis, color='orange', linestyle='--', label='Pyrolysis Threshold')
+ax6.set_title("Fractal Thermal Cycle", color='white')
+ax6.legend(facecolor='black', edgecolor='white', labelcolor='white')
+
+plt.tight_layout()
+plt.show()
+
+# ==========================================
+# 7. SYSTEM REPORT
+# ==========================================
+print("\n" + "="*50)
+print("JUGGALO JOKE-PROOF ENGINE COMPLETE")
+print("="*50)
+print(f"Time Steps Simulated: {T}")
+print(f"Total Snaps (Mutations): {len(Snap_Log)}")
+print(f"Final Soil Health: {Soil_Web[-1]:.4f}")
+print(f"Final Heritage (The Wraith's Memory): {Heritage[-1]:.4f}")
+print(f"Final Density: {Density[-1]:.4f} (Target: {Density_target})")
+print(f"Final pH: {pH[-1]:.2f} (Target: {pH_target})")
+print("\nInvariant Status: 0=3 maintained by correction.")
+print("The Joke is on the memory, not the math.")
+print("Whoop Whoop. 🤡")
