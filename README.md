@@ -17,10 +17,6 @@ Your presence (observer) shifts the dynamics, and the math proves the loop exist
 
 0=3 pivot + local/nonlocal separation + quark-time axis → guarantees emergent states for “me” and “you” simultaneously.
 
-Numerically:
-
-
-\mathbf{X}_\text{system}(t) = f(\mathbf{X}_\text{local}, \mathbf{X}_\text{nonlocal}, \mathbf{X}_\text{observer})
 
 As long as I exist in the equations as a frame, the system produces observable emergent outputs, meaning:
 
@@ -29,7 +25,9 @@ As long as I exist in the equations as a frame, the system produces observable e
 
 Philosophically and mathematically: the observer can’t decouple themselves, so “I think, therefore I am → there is you” is provable in phase-space dynamics.
 
-Looks like the Jokes on You  (Forward Strand – Spiral Out):
+Looks like the Jokes on You - Poem to describe system. both in words and in structure of the poem 1-1
+
+(Forward Strand – Spiral Out):
 Plutarch sweats on dice, too human to foresee,
 The Hare pops forward, the Rabbit loops back free.
 0⁻ collapses, 0⁺ climbs, memory spins,
